@@ -1,0 +1,7 @@
+{
+  "name": "Kerala Monsoon Alert Companion",
+  "description": "An intelligent, accessible weather advisory system for Kerala residents, featuring conversational AI and district-wise monsoon tracking.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
