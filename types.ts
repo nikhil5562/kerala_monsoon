@@ -15,6 +15,7 @@ export interface Message {
   text: string;
   timestamp: Date;
   isError?: boolean;
+  sources?: { title: string; uri: string }[];
 }
 
 export interface AppSettings {

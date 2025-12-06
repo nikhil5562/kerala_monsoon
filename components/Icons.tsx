@@ -14,7 +14,8 @@ import {
   BookOpen,
   CloudLightning,
   ShieldAlert,
-  ThermometerSun
+  ThermometerSun,
+  ExternalLink
 } from 'lucide-react';
 
 export {
@@ -32,5 +33,6 @@ export {
   BookOpen,
   CloudLightning,
   ShieldAlert,
-  ThermometerSun
+  ThermometerSun,
+  ExternalLink
 };

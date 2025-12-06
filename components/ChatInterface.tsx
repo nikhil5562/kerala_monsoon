@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Message, AppSettings } from '../types';
 import { sendMessageToGemini } from '../services/geminiService';
-import { Send, Mic, Info, CloudRain, AlertTriangle } from './Icons';
+import { Send, Mic, Info, ExternalLink, BookOpen } from './Icons';
 import { SUGGESTED_QUERIES } from '../constants';
 
 interface ChatInterfaceProps {
@@ -50,25 +50,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ settings }) => {
       
       const response = await sendMessageToGemini(text, history, settings.simpleLanguage);
       
-      let botText = response.text || "I'm sorry, I couldn't process that right now.";
+      const botText = response.text || "I'm sorry, I couldn't process that right now.";
 
-      // Append grounding sources if available
-      if (response.groundingMetadata?.groundingChunks) {
-        const links = response.groundingMetadata.groundingChunks
-          .map((chunk: any) => chunk.web?.uri ? `[${chunk.web.title || 'Source'}](${chunk.web.uri})` : null)
-          .filter(Boolean)
-          .join(', ');
-        
-        if (links) {
-            botText += `\n\n*Sources: ${links}*`;
-        }
-      }
+      // Extract sources separately instead of appending to text
+      const sources = response.groundingMetadata?.groundingChunks
+        ?.map((chunk: any) => {
+           if (chunk.web?.uri) {
+             return { title: chunk.web.title || 'Source', uri: chunk.web.uri };
+           }
+           return null;
+        })
+        .filter((s: any) => s !== null) as { title: string; uri: string }[] || [];
 
       const botMsg: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
         text: botText,
-        timestamp: new Date()
+        timestamp: new Date(),
+        sources: sources
       };
       setMessages(prev => [...prev, botMsg]);
     } catch (error) {
@@ -121,8 +120,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ settings }) => {
   };
 
   const textSizeClass = settings.largeText ? 'text-lg' : 'text-sm md:text-base';
-  const contrastClass = settings.highContrast ? 'bg-black text-yellow-300 border-white' : 'bg-white text-slate-800';
-
+  
   return (
     <div className={`flex flex-col h-full ${settings.highContrast ? 'bg-gray-900' : 'bg-slate-50'}`}>
       
@@ -143,6 +141,49 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ settings }) => {
               } ${msg.isError ? 'bg-red-100 text-red-700 border-red-200' : ''}`}
             >
               {msg.text}
+              
+              {/* Sources Display */}
+              {msg.sources && msg.sources.length > 0 && (
+                <div className={`mt-3 pt-3 border-t ${
+                    msg.role === 'user' 
+                        ? 'border-white/20' 
+                        : settings.highContrast 
+                            ? 'border-gray-600' 
+                            : 'border-slate-100'
+                }`}>
+                    <p className={`text-[10px] uppercase font-bold tracking-wider mb-2 flex items-center gap-1.5 ${
+                        msg.role === 'user' 
+                            ? 'opacity-80' 
+                            : settings.highContrast 
+                                ? 'text-gray-400' 
+                                : 'text-slate-400'
+                    }`}>
+                        <BookOpen size={10} /> Sources
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {msg.sources.map((source, idx) => (
+                            <a 
+                                key={idx} 
+                                href={source.uri} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className={`text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all max-w-[220px] ${
+                                    msg.role === 'user' 
+                                        ? 'bg-white/10 hover:bg-white/20 text-white' 
+                                        : settings.highContrast
+                                            ? 'bg-gray-900 border border-yellow-500/30 text-yellow-300 hover:border-yellow-500'
+                                            : 'bg-slate-50 border border-slate-200 text-slate-600 hover:bg-white hover:border-emerald-200 hover:text-emerald-700 hover:shadow-sm'
+                                }`}
+                                title={source.title}
+                            >
+                                <span className="truncate">{source.title}</span>
+                                <ExternalLink size={10} className="opacity-50 shrink-0" />
+                            </a>
+                        ))}
+                    </div>
+                </div>
+              )}
+
               <div className={`text-[10px] mt-2 opacity-70 text-right`}>
                 {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
