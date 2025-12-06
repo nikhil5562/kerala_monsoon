@@ -15,7 +15,23 @@ import {
   CloudLightning,
   ShieldAlert,
   ThermometerSun,
-  ExternalLink
+  ExternalLink,
+  Phone,
+  Waves,
+  Upload,
+  Image as ImageIcon,
+  Share2,
+  LifeBuoy,
+  Languages,
+  CheckSquare,
+  History,
+  Settings,
+  Search,
+  ArrowUpRight,
+  ArrowRight,
+  ArrowDownRight,
+  PanelLeftOpen,
+  PanelLeftClose
 } from 'lucide-react';
 
 export {
@@ -34,5 +50,21 @@ export {
   CloudLightning,
   ShieldAlert,
   ThermometerSun,
-  ExternalLink
+  ExternalLink,
+  Phone,
+  Waves,
+  Upload,
+  ImageIcon,
+  Share2,
+  LifeBuoy,
+  Languages,
+  CheckSquare,
+  History,
+  Settings,
+  Search,
+  ArrowUpRight,
+  ArrowRight,
+  ArrowDownRight,
+  PanelLeftOpen,
+  PanelLeftClose
 };

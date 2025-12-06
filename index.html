@@ -18,6 +18,13 @@
           -ms-overflow-style: none;
           scrollbar-width: none;
       }
+      @keyframes pulse-red {
+          0%, 100% { background-color: rgba(239, 68, 68, 0.05); }
+          50% { background-color: rgba(239, 68, 68, 0.15); }
+      }
+      .animate-pulse-slow {
+          animation: pulse-red 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
     </style>
   <script type="importmap">
 {
